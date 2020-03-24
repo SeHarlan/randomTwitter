@@ -37,6 +37,16 @@ describe('app routes', () => {
         expect(result.body).toEqual({ ...testTweet, _id: expect.any(String), __v: 0 });
       });
   });
+  it('creates a new tweet with random quote', () => {
+    return request(app)
+      .post('/api/v1/tweets')
+      .send(emptyTweet)
+      .then(result => {
+        console.log('==========test update text:  ', result.body.text);
+        expect(result.body).toEqual({ handle: 'scott', text: expect.any(String), _id: expect.any(String), __v: 0 });
+      });
+  });
+  
 
   it('gets all tweets', () => {
     return Tweet.create(testTweet)
