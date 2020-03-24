@@ -44,41 +44,41 @@ describe('app routes', () => {
         return request(app)
           .get('/api/v1/tweets')
           .then(result => {
-            expect(result).toEqual([{ ...testTweet, _id: expect.any(String), __v: 0 }]);
+            expect(result.body).toEqual([{ ...testTweet, _id: expect.any(String), __v: 0 }]);
           });
       });
   });
 
-  it.skip('gets a tweet by id', () => {
+  it('gets a tweet by id', () => {
     return Tweet.create(testTweet)
       .then(tweet => {
         return request(app)
           .get(`/api/v1/tweets/${tweet._id}`)
           .then(result => {
-            expect(result).toEqual({ ...testTweet, _id: expect.any(String), __v: 0 });
+            expect(result.body).toEqual({ ...testTweet, _id: expect.any(String), __v: 0 });
           });
       });
   });
 
-  it.skip('updates a tweeets text only', () => {
-    return Tweet.create(emptyTweet)
+  it('updates a tweeets text only', () => {
+    return Tweet.create(testTweet)
       .then(tweet => {
         return request(app)
           .patch(`/api/v1/tweets/${tweet._id}`)
-          .send('new text for tweet')
+          .send({ text: 'new text for tweet' })
           .then(result => {
-            expect(result).toEqual({ handle: 'scott', text: 'new text for tweet', _id: expect.any(String), __v: 0 });
+            expect(result.body).toEqual({ handle: 'scott', text: 'new text for tweet', _id: expect.any(String), __v: 0 });
           });
       });
   });
 
-  it.skip('deletes a tweet by id', () => {
+  it('deletes a tweet by id', () => {
     return Tweet.create(testTweet)
       .then(tweet => {
         return request(app)
           .delete(`/api/v1/tweets/${tweet._id}`)
           .then(result => {
-            expect(result).toEqual({ ...testTweet, _id: expect.any(String), __v: 0 });
+            expect(result.body).toEqual({ ...testTweet, _id: expect.any(String), __v: 0 });
           });
       });
   });
