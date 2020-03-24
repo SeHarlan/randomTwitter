@@ -12,7 +12,7 @@ const testTweet = {
   handle: 'scott',
   text: 'this is a test tweet'
 };
-const emptyTweet = {
+const empty = {
   handle: 'scott',
   text: ''
 };
@@ -30,8 +30,84 @@ describe('app routes', () => {
     return mongoose.connection.close();
   });
 
-  // * `POST /api/v1/comments` create a comment
-// * `GET /api/v1/comments/:id` get a comment by id and populate tweet
-// * `PATCH /api/v1/comments/:id` update a comment
-// * `DELETE /api/v1/comments/:id` delete a comment
+  it('creates a new comment', async() => {
+    const tweet = await Tweet.create(testTweet);
+    return request(app)
+      .post('/api/v1/comments')
+      .send({ tweetId: tweet._id, handle: 'scott', text: '' })
+      .then(result => {
+        expect(result.body).toEqual({ 
+          tweetId: tweet._id, 
+          handle: 'scott', 
+          text: '', 
+          _id: expect.any(String), 
+          __v: 0 });
+      });
+  });
+
+  it('gets a comment by id with populated tweet', async() => {
+    const tweet = await Tweet.create(testTweet);
+    return Comment.create({
+      tweetId: tweet._id, 
+      handle: 'scott', 
+      text: ''
+    })
+      .then(comment => {
+        return request(app)
+          .get(`/api/v1/comments/${comment._id}`)
+          .then(result => {
+            expect(result.body).toEqual({
+              handle: 'scott', 
+              text: expect.any(String), 
+              _id: expect.any(String), 
+              __v: 0,
+              tweetId: { ...testTweet, _id: tweet._id, __v: 0 } 
+            });
+          });
+      });
+  });
+
+  it('updates a comments text only', async() => {
+    const tweet = await Tweet.create(testTweet);
+    return Comment.create({
+      tweetId: tweet._id, 
+      handle: 'scott', 
+      text: ''
+    })
+      .then(comment => {
+        return request(app)
+          .patch(`/api/v1/comments/${comment._id}`)
+          .send({ text: 'this is that new new text' })
+          .then(result => {
+            expect(result.body).toEqual({
+              handle: 'scott', 
+              text: 'this is that new new text', 
+              _id: expect.any(String), 
+              __v: 0,
+              tweetId: expect.any(String) 
+            });
+          });
+      });
+  });
+  it('delets a comments', async() => {
+    const tweet = await Tweet.create(testTweet);
+    return Comment.create({
+      tweetId: tweet._id, 
+      handle: 'scott', 
+      text: ''
+    })
+      .then(comment => {
+        return request(app)
+          .delete(`/api/v1/comments/${comment._id}`)
+          .then(result => {
+            expect(result.body).toEqual({
+              handle: 'scott', 
+              text: expect.any(String), 
+              _id: expect.any(String), 
+              __v: 0,
+              tweetId: expect.any(String) 
+            });
+          });
+      });
+  });
 });
