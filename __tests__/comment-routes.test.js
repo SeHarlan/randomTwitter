@@ -12,10 +12,6 @@ const testTweet = {
   handle: 'scott',
   text: 'this is a test tweet'
 };
-const empty = {
-  handle: 'scott',
-  text: ''
-};
 
 describe('app routes', () => {
   beforeAll(() => {
@@ -37,9 +33,9 @@ describe('app routes', () => {
       .send({ tweetId: tweet._id, handle: 'scott', text: '' })
       .then(result => {
         expect(result.body).toEqual({ 
-          tweetId: tweet._id, 
+          tweetId: expect.any(String), 
           handle: 'scott', 
-          text: '', 
+          text: expect.any(String), 
           _id: expect.any(String), 
           __v: 0 });
       });
@@ -61,7 +57,7 @@ describe('app routes', () => {
               text: expect.any(String), 
               _id: expect.any(String), 
               __v: 0,
-              tweetId: { ...testTweet, _id: tweet._id, __v: 0 } 
+              tweetId: { ...testTweet, _id: expect.any(String), __v: 0 } 
             });
           });
       });
